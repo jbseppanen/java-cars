@@ -19,11 +19,6 @@ public class CarController {
         this.rTemplate = rTemplate;
     }
 
-    @GetMapping() //  For testing.
-    public List<Car> getAllCars() {
-        return carRepo.findAll();
-    }
-
     @GetMapping("/id/{id}")
     public Car getCarById(@PathVariable Long id) {
         return carRepo.findById(id).orElseThrow(()-> new CarNotFoundException(id));

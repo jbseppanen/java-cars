@@ -26,12 +26,27 @@ public class CarController {
 
     @GetMapping("/id/{id}")
     public Car getCarById(@PathVariable Long id) {
-        return carRepo.findById(id).orElseThrow();
+        return carRepo.findById(id).orElseThrow(()-> new CarNotFoundException(id));
     }
 
+    @GetMapping("/year/{year}")
+    public List<Car> getCarsByYear(@PathVariable int year) {
+        return carRepo.findCarsByYear(year);
+    }
+
+    @GetMapping("/brand/{brand}")
+    public List<Car> getCarsByYear(@PathVariable String brand) {
+        return carRepo.findCarsByBrandIgnoreCase(brand);
+    }
 
     @PostMapping("/upload")
     public List<Car> loadCars(@RequestBody List<Car> carsToUpload) {
         return carRepo.saveAll(carsToUpload);
     }
+
+    @DeleteMapping("delete/{id}")
+    public void deleteCarById(@PathVariable Long id) {
+        carRepo.deleteById(id);
+    }
+
 }

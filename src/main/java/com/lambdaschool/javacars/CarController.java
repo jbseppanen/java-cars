@@ -38,6 +38,8 @@ public class CarController {
     }
 
     @PostMapping("/upload")
+
+
     public List<Car> loadCars(@RequestBody List<Car> carsToUpload) {
         CarLog message = new CarLog("Data Loaded");
         rTemplate.convertAndSend(JavaCarsApplication.QUEUE_NAME_LOG, message.toString());

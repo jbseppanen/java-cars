@@ -2,6 +2,7 @@ package com.lambdaschool.javacars;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,17 +32,23 @@ public class CarController {
 
     @GetMapping("/brand/{brand}")
     public List<Car> getCarsByYear(@PathVariable String brand) {
+        CarLog message = new CarLog("Search for " + brand);
+        rTemplate.convertAndSend(JavaCarsApplication.QUEUE_NAME_LOG, message.toString());
         return carRepo.findCarsByBrandIgnoreCase(brand);
     }
 
     @PostMapping("/upload")
     public List<Car> loadCars(@RequestBody List<Car> carsToUpload) {
+        CarLog message = new CarLog("Data Loaded");
+        rTemplate.convertAndSend(JavaCarsApplication.QUEUE_NAME_LOG, message.toString());
         return carRepo.saveAll(carsToUpload);
     }
 
     @DeleteMapping("delete/{id}")
-    public void deleteCarById(@PathVariable Long id) {
+    public ResponseEntity<?> deleteCarById(@PathVariable Long id) {
         carRepo.deleteById(id);
+        CarLog message = new CarLog(id + " Data deleted");
+        rTemplate.convertAndSend(JavaCarsApplication.QUEUE_NAME_LOG, message.toString());
+        return ResponseEntity.noContent().build();
     }
-
 }
